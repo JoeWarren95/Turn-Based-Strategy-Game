@@ -54,9 +54,13 @@ public class Unit : MonoBehaviour
         GridPosition newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         if(newGridPosition != gridPosition)
         {
-            //Unit changed Grid Position, this will change our original grid position to our new grid position
-            LevelGrid.Instance.UnitMovedGridPosition(this, gridPosition, newGridPosition);
+            //store a reference to the old position, this fixes a bug where even though we moved, the old grid
+            //was still visible in our game 
+            GridPosition oldGridPosition = gridPosition;
             gridPosition = newGridPosition;
+
+            //Unit changed Grid Position, this will change our original grid position to our new grid position
+            LevelGrid.Instance.UnitMovedGridPosition(this, oldGridPosition, newGridPosition);
         }
     }
     #region Possible Actions

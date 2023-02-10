@@ -9,12 +9,13 @@ public class GridSystemVisualSingle : MonoBehaviour
 
     [SerializeField] private MeshRenderer meshRenderer;
 
-    public void Show()
+    public void Show(Material material)
     {
         //this function shows the visual prefab
         //if w/in the player's move range
         //can be called if we ever need to activate the prefab
         meshRenderer.enabled = true;
+        meshRenderer.material = material;
     }
 
     public void Hide()
