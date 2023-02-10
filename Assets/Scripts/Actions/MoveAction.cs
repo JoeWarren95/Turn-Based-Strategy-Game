@@ -61,13 +61,13 @@ public class MoveAction : BaseAction
     //NOTE this function was originally called 'Move()' but it was refactored in "Generic Take Action"
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        ActionStart(onActionComplete);
-
         //this function is responsible for moving the unit, it is public so that we can access it from
         //other scripts, without exposing the internal code to everyone
         this.targetPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
 
         OnStartMoving?.Invoke(this, EventArgs.Empty);
+
+        ActionStart(onActionComplete);
 
     }
 

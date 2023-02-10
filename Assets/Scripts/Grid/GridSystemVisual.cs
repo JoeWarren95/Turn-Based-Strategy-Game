@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -49,11 +50,9 @@ public class GridSystemVisual : MonoBehaviour
                     gridSystemVisualSingleTransform.GetComponent<GridSystemVisualSingle>();
             }
         }
-    }
 
-    private void Update()
-    {
-        UpdateGridVisual();
+        //listener for whenever an action has changed
+        UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
     }
 
     public void HideAllGridPosition()
@@ -95,4 +94,9 @@ public class GridSystemVisual : MonoBehaviour
         ShowGridPositionList(selectedAction.GetValidActionGridPositionList());
     }
 
+    private void UnitActionSystem_OnSelectedActionChanged(object sender, EventArgs e)
+    {
+        //with this function, we won't be updating the grid visual every frame, so it's a lot more efficient
+        UpdateGridVisual();
+    }
 }

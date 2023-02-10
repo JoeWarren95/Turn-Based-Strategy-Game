@@ -34,9 +34,9 @@ public class SpinAction : BaseAction
     {
         //this is the function that handles spinning the unit
         //The gridPosition does nothing here, but we need it to match the original signature
-        ActionStart(onActionComplete);
-
         totalSpinAmount = 0f;
+
+        ActionStart(onActionComplete);
     }
 
     public override string GetActionName()

@@ -11,6 +11,8 @@ public class LevelGrid : MonoBehaviour
     //we want this field to be read from anywhere, but only set in this class
     public static LevelGrid Instance { get; private set; }
 
+
+
     [SerializeField] private Transform gridDebugObjectPrefab;
 
     private GridSystem gridSystem;
