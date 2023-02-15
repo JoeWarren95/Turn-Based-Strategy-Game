@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,7 @@ using UnityEngine;
 //removed MonoBehaviour bc we won't extend it in this class
 //we want to be able to use the constructor to create our grid system
 //if we extend MonoBehaviour, then we won't be able to use the constructor
-public class GridSystem
+public class GridSystem<TGridObject>
 {
     //this script is responsible for creating/handling our grid
 
@@ -15,16 +16,16 @@ public class GridSystem
 
     //by adding a ',' in the brackets, we are specifying that this is a 2D array
     //this variable is used to store the reference for our grid objects so that they aren't destroyed after being created
-    private GridObject[,] gridObjectArray;
+    private TGridObject[,] gridObjectArray;
 
-    public GridSystem(int width, int height, float cellSize)
+    public GridSystem(int width, int height, float cellSize, Func<GridSystem<TGridObject>, GridPosition, TGridObject> createGridObject)
     {
         this.width = width;
         this.height = height;
         this.cellSize = cellSize;
 
         //this line is what creates our grid
-        gridObjectArray = new GridObject[width, height];
+        gridObjectArray = new TGridObject[width, height];
         
         //this nested for loop populates our grid, and tracks what objects are on a grid position at any given time
         //again first loop creates the X axis, second loop creates the Z axis
@@ -33,7 +34,10 @@ public class GridSystem
             for(int z = 0; z < height; z++)
             {
                 GridPosition gridPosition = new GridPosition(x, z);
-                gridObjectArray[x, z] = new GridObject(this, gridPosition);
+
+                //the below 2 lines of code are the same, the top one just uses delegates
+                gridObjectArray[x, z] = createGridObject(this, gridPosition);
+                //gridObjectArray[x, z] = new TGridObject(this, gridPosition);
             }
         }
     }
@@ -70,7 +74,7 @@ public class GridSystem
                 //then the next 2 lines set the grid debug objects at their given grid positions
                 Transform debugTransform = GameObject.Instantiate(debugPrefab, GetWorldPosition(gridPosition), Quaternion.identity);
                 GridDebugObject gridDebugObject = debugTransform.GetComponent<GridDebugObject>();
-                gridDebugObject.SetGridObject(GetGridObject(gridPosition));
+                gridDebugObject.SetGridObject(GetGridObject(gridPosition) as GridObject);
             }
         }
     }
@@ -78,7 +82,7 @@ public class GridSystem
     //get a grid object from a grid position
     //this function allows us to see what tile our unit is currently occupying
     //it takes our world position, and converts it into a grid position that we are able to see through our debugger
-    public GridObject GetGridObject(GridPosition gridPosition)
+    public TGridObject GetGridObject(GridPosition gridPosition)
     {
         return gridObjectArray[gridPosition.x, gridPosition.z];
     }

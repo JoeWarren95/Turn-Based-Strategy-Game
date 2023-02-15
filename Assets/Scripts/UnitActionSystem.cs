@@ -209,7 +209,11 @@ public class UnitActionSystem : MonoBehaviour
     private void SetSelectedUnit(Unit unit)
     {
         selectedUnit = unit;
-        SetSelectedAction(unit.GetMoveAction());
+
+
+        SetSelectedAction(unit.GetAction<MoveAction>());
+        //this is the same code as this^^^ but this is using Generics
+        //SetSelectedAction(unit.GetMoveAction());
 
         //this checks if there are subscribers to the event, and if there are, proceed with the event
         OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);

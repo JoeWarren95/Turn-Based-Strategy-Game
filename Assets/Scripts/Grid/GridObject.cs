@@ -9,11 +9,11 @@ public class GridObject
     /// grid position
     /// </summary>
     
-    private GridSystem gridSystem;
+    private GridSystem<GridObject> gridSystem;
     private GridPosition gridPosition;
     private List<Unit> unitList;
 
-    public GridObject(GridSystem gridSystem, GridPosition gridPosition)
+    public GridObject(GridSystem<GridObject> gridSystem, GridPosition gridPosition)
     {
         //this is the constructor that will set all the units on a grid position
         //it is public so that it can be accessed from outside this script

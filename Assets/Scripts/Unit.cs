@@ -36,9 +36,9 @@ public class Unit : MonoBehaviour
     private void Awake()
     {
         healthSystem = GetComponent<HealthSystem>();
-        moveAction = GetComponent<MoveAction>();
-        spinAction = GetComponent<SpinAction>();
-        shootAction = GetComponent<ShootAction>();
+        //moveAction = GetComponent<MoveAction>();
+        //spinAction = GetComponent<SpinAction>();
+        //shootAction = GetComponent<ShootAction>();
         baseActionArray = GetComponents<BaseAction>();
     }
 
@@ -71,8 +71,22 @@ public class Unit : MonoBehaviour
             LevelGrid.Instance.UnitMovedGridPosition(this, oldGridPosition, newGridPosition);
         }
     }
-    #region Possible Actions
-    public MoveAction GetMoveAction()
+
+    //with this generic action, we can replace all the individual action functions
+    public T GetAction<T>() where T : BaseAction
+    {
+        foreach (BaseAction baseAction in baseActionArray)
+        {
+            if(baseAction is T)
+            {
+                return (T)baseAction;
+            }
+        }
+        return null;
+    }
+
+    #region Possible Actions (replaced by the generic GetAction<T>() function)
+    /*public MoveAction GetMoveAction()
     {
         return moveAction;
     }
@@ -85,13 +99,15 @@ public class Unit : MonoBehaviour
     public ShootAction GetShootAction()
     {
         return shootAction;
-    }
+    }*/
+
+    #endregion
 
     public BaseAction[] GetBaseActionArray()
     {
         return baseActionArray;
     }
-    #endregion
+    
 
     public GridPosition GetGridPosition()
     {
