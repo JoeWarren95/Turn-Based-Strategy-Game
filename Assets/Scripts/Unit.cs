@@ -73,6 +73,9 @@ public class Unit : MonoBehaviour
     }
 
     //with this generic action, we can replace all the individual action functions
+    //the closest comparison to this would be turning our actions into something akin to List in C#
+    //with List, all we need to do is use the List keyword and then define the type in <> brackets
+    //we are doing the same thing here except now we are extending BaseAction rather than List
     public T GetAction<T>() where T : BaseAction
     {
         foreach (BaseAction baseAction in baseActionArray)
@@ -84,7 +87,6 @@ public class Unit : MonoBehaviour
         }
         return null;
     }
-
     #region Possible Actions (replaced by the generic GetAction<T>() function)
     /*public MoveAction GetMoveAction()
     {
@@ -111,11 +113,13 @@ public class Unit : MonoBehaviour
 
     public GridPosition GetGridPosition()
     {
+        //returns the Unit's position relative to our Grid
         return gridPosition;
     }
 
     public Vector3 GetWorldPosition()
     {
+        //returns the Unit's position relative to the world
         return transform.position;
     }
 
@@ -150,6 +154,8 @@ public class Unit : MonoBehaviour
 
     private void SpendActionPoints(int amount)
     {
+        //this function handles taking away the correct number of action points based on the action
+        //selected, and invokes the event letting our system know the action points have changed
         actionPoints -= amount;
 
         OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
@@ -157,11 +163,13 @@ public class Unit : MonoBehaviour
 
     public int GetActionPoints()
     {
+        //returns the current number of action points the unit has
         return actionPoints;
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
+        //this function handles resetting the action points of both the player and the enemy units
         if(IsEnemy() && !TurnSystem.Instance.IsPlayerTurn() || 
             (!IsEnemy() && TurnSystem.Instance.IsPlayerTurn()))
 
@@ -172,25 +180,31 @@ public class Unit : MonoBehaviour
 
     public bool IsEnemy()
     {
+        //returns if a unit is an enemy or not
         return isEnemy;
     }
 
     public void Damage(int damageAmount)
     {
+        //this function handles units taking damage by updating the amount of health remaining
         healthSystem.Damage(damageAmount);
     }
 
     private void HealthSystem_OnDead(object sender, EventArgs e)
     {
+        //this function handles unit death by first removing that unit from the current grid position - 
         LevelGrid.Instance.RemoveUnitAtGridPosition(gridPosition, this);
 
+        //- destroying the gameobject - 
         Destroy(gameObject);
 
+        //- and invoking the correct Event
         OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
     }
 
     public float GetHealthNormalized()
     {
+        //this function returns the amount of health we have left but normalized so that we don't return a float value
         return healthSystem.GetHealthNormalized();
     }
 }

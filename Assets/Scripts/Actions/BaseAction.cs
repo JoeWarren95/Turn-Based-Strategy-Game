@@ -46,6 +46,7 @@ public abstract class BaseAction : MonoBehaviour
 
     protected void ActionStart(Action onActionComplete)
     {
+        //this function will be called whenever we take and start an action
         isActive = true;
         this.onActionComplete = onActionComplete;
 
@@ -54,6 +55,7 @@ public abstract class BaseAction : MonoBehaviour
 
     protected void ActionComplete()
     {
+        //once an action is complete, this function will reset our system
         isActive = false;
         onActionComplete();
 
@@ -67,20 +69,28 @@ public abstract class BaseAction : MonoBehaviour
 
     public EnemyAIAction GetBestEnemyAIAction()
     {
+        //this function is the "brain" behind our enemy AI
+
+        //this line returns what possible actions are available
         List<EnemyAIAction> enemyAIActionList = new List<EnemyAIAction>();
 
+        //this line returns the valid grid positions given the action selected
         List<GridPosition> validActionGridPositionList = GetValidActionGridPositionList();
 
+        //this loop is what will activate the valid grid positions based on the action the unit decides to take
         foreach(GridPosition gridPosition in validActionGridPositionList)
         {
             EnemyAIAction enemyAIAction = GetEnemyAIAction(gridPosition);
             enemyAIActionList.Add(enemyAIAction);
         }
 
+        //this if statement will return the enemy action that is most valuable
         if(enemyAIActionList.Count > 0)
         {
+            //it does this by sorting the list from greatest actionValue to least -
             enemyAIActionList.Sort((EnemyAIAction a, EnemyAIAction b) => b.actionValue - a.actionValue);
 
+            //- and returning the top item in the list, this is the action we will take
             return enemyAIActionList[0];
         }
         else

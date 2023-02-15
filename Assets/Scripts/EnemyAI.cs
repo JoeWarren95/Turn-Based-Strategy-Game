@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
+    /// <summary>
+    /// This script handles our enemies taking turns once the player has ended theirs
+    /// </summary>
+
     private enum State
     {
         WaitingForEnemyTurn,
@@ -17,6 +21,7 @@ public class EnemyAI : MonoBehaviour
 
     private void Awake()
     {
+        //set the default state to waiting as the game will always start with the player first
         state = State.WaitingForEnemyTurn;
     }
 
@@ -43,6 +48,7 @@ public class EnemyAI : MonoBehaviour
                 {
                     if (TryTakeEnemyAIAction(SetStateTakingTurn))
                     {
+                        //this sets the state to Busy once an action has started
                         state = State.Busy;
                     }
                     else
@@ -69,6 +75,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (!TurnSystem.Instance.IsPlayerTurn())
         {
+            //if it isn't the player's turn, set the enemy state to taking their turn, and start the timer
             state = State.TakingTurn;
             timer = 2f;
         }
@@ -78,10 +85,13 @@ public class EnemyAI : MonoBehaviour
 
     private bool TryTakeEnemyAIAction(Action onEnemyAIActionComplete)
     {
+        //this function will allow the enemy to try to take a turn if they have action points available
         foreach(Unit enemyUnit in UnitManager.Instance.GetEnemyUnitList())
         {
+            //this foreach loop will cycle through all the Enemy Units in the EnemyUnitList
             if(TryTakeEnemyAIAction(enemyUnit, onEnemyAIActionComplete))
             {
+                //this if statement will will force the enemy units to spend all of their action points if they're available
                 return true;
             }
         }
@@ -103,6 +113,7 @@ public class EnemyAI : MonoBehaviour
 
             if(bestEnemyAIAction == null)
             {
+                
                 bestEnemyAIAction = baseAction.GetBestEnemyAIAction();
                 bestBaseAction = baseAction;
             }

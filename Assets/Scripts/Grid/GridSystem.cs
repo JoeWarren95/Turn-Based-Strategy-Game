@@ -89,6 +89,7 @@ public class GridSystem<TGridObject>
 
     public bool IsValidGridPosition(GridPosition gridPosition)
     {
+        //only returns positive if the position selected is a valid x,z coordinate
         return gridPosition.x >= 0 && 
             gridPosition.z >= 0 && 
             gridPosition.x < width && 
@@ -97,11 +98,13 @@ public class GridSystem<TGridObject>
 
     public int GetWidth()
     {
+        //exposes the width of our grid
         return width;
     }
 
     public int GetHeight()
     {
+        //exposes the height of our grid
         return height;
     }
 }

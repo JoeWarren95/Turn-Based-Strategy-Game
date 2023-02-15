@@ -61,15 +61,18 @@ public class SpinAction : BaseAction
 
     public override int GetActionPointsCost()
     {
-        //we want the spin action to cost 2 points to use
+        //this function returns how many action points we want this action to cost
         return 1;
     }
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
+        //with this function, we determine how valuable it is to spin
         return new EnemyAIAction
         {
             gridPosition = gridPosition,
+            //by setting the actionValue to 0, we are all but guaranteeing that the enemy will never choose to
+            //spin, but this is what we want
             actionValue = 0,
         };
     }

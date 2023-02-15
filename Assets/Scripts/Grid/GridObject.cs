@@ -48,11 +48,13 @@ public class GridObject
 
     public List<Unit> GetUnitList()
     {
+        //this function returns the unitList from a given grid position
         return unitList;
     }
 
     public bool HasAnyUnit()
     {
+        //this function returns how many units are on a grid position if it's greater than 0
         return unitList.Count > 0;
     }
 

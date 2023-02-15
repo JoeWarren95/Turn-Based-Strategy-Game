@@ -59,6 +59,8 @@ public class ShootAction : BaseAction
 
     private void NextState()
     {
+        //this function handles the transistions of our Shoot action
+        //it does this by stating what to do when Aiming, Shooting, and during Cooloff
         switch (state)
         {
             case State.Aiming:
@@ -80,9 +82,14 @@ public class ShootAction : BaseAction
 
     private void Aim()
     {
+        //this function handles our enemy unit Aiming at the Player
+
+        #region my attempt at rotating towards the player
         //rotate towards the enemy
         //Vector3 shootDirection = (targetUnit.transform.position - transform.position).normalized;
+        #endregion
 
+        //rotate unit towards the player
         Vector3 aimDirection = (targetUnit.GetWorldPosition() - unit.GetWorldPosition()).normalized;
 
         float rotateSpeed = 10f;
@@ -91,6 +98,7 @@ public class ShootAction : BaseAction
 
     private void Shoot()
     {
+        //this function invokes the Shoot event and determines how much damage one shot will do
         OnShoot?.Invoke(this, new OnShootEventArgs
         {
             targetUnit = targetUnit,
@@ -101,11 +109,13 @@ public class ShootAction : BaseAction
 
     public override string GetActionName()
     {
+        //this function returns the specific name of the action
         return "Shoot";
     }
 
     public override List<GridPosition> GetValidActionGridPositionList()
     {
+        //this function returns the valid grid positions around/on top of our unit, given the action that is selected
         GridPosition unitGridPosition = unit.GetGridPosition();
 
         return GetValidActionGridPositionList(unitGridPosition);
@@ -169,42 +179,50 @@ public class ShootAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
+        //this function allows our enemy to take its ShootAction
 
+        //first it gets a valid unit to target
         targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(gridPosition);
 
+        //sets its state to Aiming, and starts the timer for how long aiming should take
         state = State.Aiming;
         float aimingStateTime = 1f;
         stateTimer = aimingStateTime;
 
         canShootBullet = true;
 
+        //once done it sets itself to complete
         ActionStart(onActionComplete);
-
     }
 
     public Unit GetTargetUnit()
     {
+        //this function returns a unit to target
         return targetUnit;
     }
 
     public int GetMaxShootDistance()
     {
+        //this function exposes our maxShootDistance variable without giving away it's accessability
         return maxShootDistance;
     }
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
+        //this function determines how valuable it is to perform a ShootAction
         Unit targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(gridPosition);
 
         return new EnemyAIAction
         {
             gridPosition = gridPosition,
+            //here we set the actionValue by determining which Unit has taken the most damage
             actionValue = 100 + Mathf.RoundToInt((1 - targetUnit.GetHealthNormalized()) * 100f),
         };
     }
 
     public int GetTargetCountAtPosition(GridPosition gridPosition)
     {
+        //This function returns how many valid targets (could be player units, or could be obstacles/items) are around our enemy Unit
         return GetValidActionGridPositionList(gridPosition).Count;
     }
 }

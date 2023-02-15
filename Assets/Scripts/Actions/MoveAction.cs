@@ -138,11 +138,16 @@ public class MoveAction : BaseAction
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
+        //this function allows our Enemy to determine where to move, by determining how "valuable" a space is to move to
+        //with this logic, the enemy will prioritize moving into a spot where it is surrounded by Units
+
+        //this line determines how many targets are around the enemy unit
         int targetCountAtGridPosition = unit.GetAction<ShootAction>().GetTargetCountAtPosition(gridPosition);
         //int targetCountAtGridPosition = unit.GetShootAction().GetTargetCountAtPosition(gridPosition);
 
         return new EnemyAIAction
         {
+            //this determines what grid position an enemy will move to, and how valuable it is to move
             gridPosition = gridPosition,
             actionValue = targetCountAtGridPosition * 10,
         };
