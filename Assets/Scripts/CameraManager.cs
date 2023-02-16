@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
+    /// <summary>
+    /// This class was created when we added in an ActionCamera to give the game a nice 'zoom in' effect whenever
+    /// a Unit is taking a shot at another one
+    /// </summary>
+
     [SerializeField] private GameObject actionCameraGameObject;
 
     private void Start()
@@ -12,16 +17,19 @@ public class CameraManager : MonoBehaviour
         BaseAction.OnAnyActionStarted += BaseAction_OnAnyActionStarted;
         BaseAction.OnAnyActionCompleted += BaseAction_OnAnyActionCompleted;
 
+        //bc we don't want the ActionCamera to be visible when we load into the game, we call the function to ensure it isn't
         HideActionCamera();
     }
 
     private void ShowActionCamera()
     {
+        //show our ActionCamera when a Unit is firing
         actionCameraGameObject.SetActive(true);
     }
 
     private void HideActionCamera()
     {
+        //hide our ActionCamera
         actionCameraGameObject.SetActive(false);
     }
 

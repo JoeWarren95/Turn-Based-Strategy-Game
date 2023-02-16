@@ -4,12 +4,18 @@ using UnityEngine;
 
 public class UnitRagdoll : MonoBehaviour
 {
+    /// <summary>
+    /// this script handles the what the ragdoll does once it's spawned into the scene
+    /// </summary>
+
     [SerializeField] private Transform ragdollRootBone;
 
     public void Setup(Transform originalRootBone)
     {
+        //this line matches all the bones of our ragdoll to the Unit it needs to be spawned on
         MatchAllChildTransform(originalRootBone, ragdollRootBone);
 
+        //this line allows the ragdoll to pop up slightly when it's spawned into the scene
         ApplyExplosionToRagdoll(ragdollRootBone, 300f, transform.position, 10f);
     }
 
@@ -33,6 +39,7 @@ public class UnitRagdoll : MonoBehaviour
 
     private void ApplyExplosionToRagdoll(Transform root, float explosionForce, Vector3 explosionPosition, float explosionRange)
     {
+        //this function is used to pop up the ragdoll
         foreach(Transform child in root)
         {
             if(child.TryGetComponent<Rigidbody>(out Rigidbody childRigidbody))

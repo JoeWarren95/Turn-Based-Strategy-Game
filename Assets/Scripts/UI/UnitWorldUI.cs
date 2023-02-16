@@ -7,6 +7,11 @@ using UnityEngine.UI;
 
 public class UnitWorldUI : MonoBehaviour
 {
+    /// <summary>
+    /// This script handles all of the UI for the Units that can be seen at all times while playing the game
+    /// this means the health bars, and the action points currently
+    /// </summary>
+
     [SerializeField] private TextMeshProUGUI actionPointsText;
     [SerializeField] private Unit unit;
     [SerializeField] private Image healthBarImage;
@@ -26,6 +31,7 @@ public class UnitWorldUI : MonoBehaviour
 
     private void UpdateActionPointsText()
     {
+        //this updates the text anytime we spend/replenish action points
         actionPointsText.text = unit.GetActionPoints().ToString();
     }
 
@@ -36,6 +42,7 @@ public class UnitWorldUI : MonoBehaviour
 
     private void UpdateHealthBar()
     {
+        //this updates the health bar anytime damage occurs
         healthBarImage.fillAmount = healthSystem.GetHealthNormalized();
     }
 

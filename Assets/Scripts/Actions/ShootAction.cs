@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class ShootAction : BaseAction
 {
+    //an enum for all the states of our ShootAction
     private enum State
     {
         Aiming,

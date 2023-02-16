@@ -19,6 +19,8 @@ public class GridSystemVisual : MonoBehaviour
         public Material material;
     }
 
+    //this enum stores all of the colors we want our tiles to change to based upon what is on top of them/what
+    //action is being taken
     public enum GridVisualType
     {
         White,
@@ -28,10 +30,13 @@ public class GridSystemVisual : MonoBehaviour
         Yellow
     }
 
+    //reference to our individual visual prefab
     [SerializeField] private Transform gridSystemVisualSinglePrefab;
 
+    //reference to the materials we've created based on our enum GridVisualType
     [SerializeField] private List<GridVisualTypeMaterial> gridVisualTypeMaterialList;
 
+    //the double array we are using for our grid
     private GridSystemVisualSingle[,] gridSystemVisualSingleArray;
 
     private void Awake()
@@ -72,6 +77,7 @@ public class GridSystemVisual : MonoBehaviour
         //listener for whenever an action has changed
         UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
 
+        //listener for whenever a Unit has moved its position
         LevelGrid.Instance.OnAnyUnitMovedGridPosition += LevelGrid_OnAnyUnitMovedGridPosition;
 
         UpdateGridVisual();
@@ -149,6 +155,7 @@ public class GridSystemVisual : MonoBehaviour
 
         switch (selectedAction)
         {
+            //this switch statement handles the changing colors of our grid
             default:
             case MoveAction moveAction:
                 gridVisualType = GridVisualType.White;
@@ -175,11 +182,13 @@ public class GridSystemVisual : MonoBehaviour
 
     private void LevelGrid_OnAnyUnitMovedGridPosition(object sender, EventArgs e)
     {
+        //with this event, and UnitActionSystem_OnSelectedActionChanged, we are able to get rid of our Update function
         UpdateGridVisual();
     }
 
     private Material GetGridVisualTypeMaterial(GridVisualType gridVisualType)
     {
+        //this function will change our tiles to the correct color based on the action that is selected
         foreach (GridVisualTypeMaterial gridVisualTypeMaterial in gridVisualTypeMaterialList)
         {
             if(gridVisualTypeMaterial.gridVisualType == gridVisualType)

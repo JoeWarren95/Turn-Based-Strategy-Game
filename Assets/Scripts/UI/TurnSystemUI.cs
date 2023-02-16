@@ -18,6 +18,7 @@ public class TurnSystemUI : MonoBehaviour
     {
         endTurnButton.onClick.AddListener(() =>
         {
+            //this calls our NextTurn function from our TurnSystem script
             TurnSystem.Instance.NextTurn();
         });
 
@@ -41,16 +42,20 @@ public class TurnSystemUI : MonoBehaviour
 
     private void UpdateTurnText()
     {
+        //This function updates our UI for Turn # whenever a full turn has ended
         turnNumberText.text = "TURN " + TurnSystem.Instance.GetTurnNumber();
     }
 
     private void UpdateEnemyTurnVisual()
     {
+        //this function makes it so the player can't perform any actions when it is the enemy's turn
         enemyTurnVisualGameObject.SetActive(!TurnSystem.Instance.IsPlayerTurn());
     }
 
     private void UpdateEndTurnButtonVisibility()
     {
+        //this function activates/deactivates our End Turn button, this is so the player can only end
+        //a turn when it is their turn and not the enemy's turn
         endTurnButton.gameObject.SetActive(TurnSystem.Instance.IsPlayerTurn());
     }
 }

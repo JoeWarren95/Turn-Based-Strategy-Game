@@ -7,6 +7,12 @@ using TMPro;
 
 public class UnitActionSystemUI : MonoBehaviour
 {
+    /// <summary>
+    /// This script handles the creation of the UI for all of our Action Buttons based on whichever unit
+    /// is selected. It does this by creating a list of actions, and creating a button for each item in
+    /// that list
+    /// </summary>
+
     [SerializeField] private Transform actionButtonPrefab;
     [SerializeField] private Transform actionButtonContainerTransform;
     [SerializeField] private TextMeshProUGUI actionPointsText; 
@@ -16,11 +22,13 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void Awake()
     {
+        //access the list for the number of actions this unit has
         actionButtonUIList = new List<ActionButtonUI>();
     }
 
     private void Start()
     {
+        //add listeners to each of our appropriate events
         UnitActionSystem.Instance.OnSelectedUnitChanged += UnitActionSystem_OnSelectedUnitChanged;
         UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
         UnitActionSystem.Instance.OnActionStarted += UnitActionSystem_OnActionStarted;
@@ -35,6 +43,7 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void CreateUnitActionButtons()
     {
+        //this function creates all the buttons needed based upon the unit that is selected
         foreach(Transform buttonTransform in actionButtonContainerTransform)
         {
             //must include the '.gameObject' in this destroy, otherwise there will be
@@ -46,6 +55,7 @@ public class UnitActionSystemUI : MonoBehaviour
 
         Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
 
+        //this loop creates all the buttons for the unit we've selected, and grabs the appropriate script for those buttons
         foreach (BaseAction baseAction in selectedUnit.GetBaseActionArray())
         {
             Transform actionButtonTransform = Instantiate(actionButtonPrefab, actionButtonContainerTransform);
@@ -67,18 +77,20 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void UnitActionSystem_OnSelectedActionChanged(object sender, EventArgs e)
     {
-
+        //this event updates our visuals (unit selected circle/UI) whenever we select a different unit
         UpdateSelectedVisual();
 
     }
 
     private void UnitActionSystem_OnActionStarted(object sender, EventArgs e)
     {
+        //once we perform an action, we want our actionPoints to go down, this function updates them
         UpdateActionPoints();
     }
 
     private void UpdateSelectedVisual()
     {
+
         foreach(ActionButtonUI actionButtonUI in actionButtonUIList)
         {
             actionButtonUI.UpdateSelectedVisual();
@@ -87,12 +99,14 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void UpdateActionPoints()
     {
+        //this is the function that actually handles the resetting of the actionPoints UI
         Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
         actionPointsText.text = "Action Points: " + selectedUnit.GetActionPoints();
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
+        //this function resets the number of action points we or the enemies have once a turn has changed
         UpdateActionPoints();
     }
 

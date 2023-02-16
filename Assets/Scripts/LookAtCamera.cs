@@ -20,6 +20,7 @@ public class LookAtCamera : MonoBehaviour
 
     private void LateUpdate()
     {
+        //With these 2 if statements, we are always ensuring that our UI is facing our camera
         if (invert)
         {
             //this ensures our UI isn't reversed when we're looking at it
