@@ -10,16 +10,17 @@ public class GridDebugObject : MonoBehaviour
     /// </summary>
     [SerializeField] private TextMeshPro textMeshPro;
 
-    private GridObject gridObject;
+    //private GridObject gridObject;
+    private object gridObject;
 
-    public void SetGridObject(GridObject gridObject)
+    public virtual void SetGridObject(object gridObject)
     {
         this.gridObject = gridObject;
     }
 
     //this update function will change our debug text whenever there is a unit on top of one of
     //the grid tiles
-    private void Update()
+    protected virtual void Update()
     {
         textMeshPro.text = gridObject.ToString();
     }

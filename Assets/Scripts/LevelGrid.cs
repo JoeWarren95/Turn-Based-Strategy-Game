@@ -34,7 +34,7 @@ public class LevelGrid : MonoBehaviour
             (GridSystem<GridObject> g, GridPosition gridPosition) => new GridObject(g, gridPosition));
 
         //this line creates the debug objects which atm is just text saying '1,2'
-        gridSystem.CreateDebugObjects(gridDebugObjectPrefab);
+        //gridSystem.CreateDebugObjects(gridDebugObjectPrefab);
     }
 
     //these four functions Add/Get/Remove UnitAtGridPosition will help our grid recognize when a tile is empty, occupied, or

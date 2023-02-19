@@ -45,7 +45,8 @@ public class GridSystem<TGridObject>
     public Vector3 GetWorldPosition(GridPosition gridPosition)
     {
         //this function translates our world position into a position on our grid
-        return new Vector3(gridPosition.x, 0, gridPosition.z) * cellSize;
+        //return new Vector3(gridPosition.x, 0, gridPosition.z) * cellSize;
+        return new Vector3(gridPosition.x, 0.02f, gridPosition.z) * cellSize;
     }
 
     public GridPosition GetGridPosition(Vector3 worldPosition)
@@ -74,7 +75,8 @@ public class GridSystem<TGridObject>
                 //then the next 2 lines set the grid debug objects at their given grid positions
                 Transform debugTransform = GameObject.Instantiate(debugPrefab, GetWorldPosition(gridPosition), Quaternion.identity);
                 GridDebugObject gridDebugObject = debugTransform.GetComponent<GridDebugObject>();
-                gridDebugObject.SetGridObject(GetGridObject(gridPosition) as GridObject);
+                gridDebugObject.SetGridObject(GetGridObject(gridPosition));
+
             }
         }
     }
