@@ -17,6 +17,8 @@ public class PathNode
     //heuristic cost, an estimation of the distance it takes to get from point A to point
     //B, it is basically an educated guess
     private int hCost;
+
+    //the gCost + the hCost
     private int fCost;
 
     //the reference to the path node we came from to reach the node we are currently on
@@ -30,7 +32,6 @@ public class PathNode
     //this function will tell us through our debugger what is on a tile at a given time
     public override string ToString()
     {
-
         return gridPosition.ToString();
     }
 
@@ -71,6 +72,8 @@ public class PathNode
 
     public void SetCameFromPathNode(PathNode pathNode)
     {
+        //this function manually resets the node we came from in the event that we've 
+        //found a more optimal path
         cameFromPathNode = pathNode;
     }
 

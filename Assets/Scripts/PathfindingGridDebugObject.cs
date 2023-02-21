@@ -5,6 +5,11 @@ using TMPro;
 
 public class PathfindingGridDebugObject : GridDebugObject
 {
+    /// <summary>
+    /// this script was made so that we can see all the possible costs for our movement
+    /// it will update as we move through our grid
+    /// </summary>
+
     [SerializeField] private TextMeshPro gCostText;
     [SerializeField] private TextMeshPro hCostText;
     [SerializeField] private TextMeshPro fCostText;
