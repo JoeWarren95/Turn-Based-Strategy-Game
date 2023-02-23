@@ -16,6 +16,10 @@ public class LevelGrid : MonoBehaviour
 
     [SerializeField] private Transform gridDebugObjectPrefab;
 
+    [SerializeField] private int width;
+    [SerializeField] private int height;
+    [SerializeField] private float cellSize;
+
     private GridSystem<GridObject> gridSystem;
 
     private void Awake()
@@ -30,11 +34,16 @@ public class LevelGrid : MonoBehaviour
         Instance = this;
 
         //this is setting the dimensions of our grid for now, will be replaced later
-        gridSystem = new GridSystem<GridObject>(10, 10, 2f, 
+        gridSystem = new GridSystem<GridObject>(width, height, cellSize, 
             (GridSystem<GridObject> g, GridPosition gridPosition) => new GridObject(g, gridPosition));
 
         //this line creates the debug objects which atm is just text saying '1,2'
         //gridSystem.CreateDebugObjects(gridDebugObjectPrefab);
+    }
+
+    private void Start()
+    {
+        Pathfinding.Instance.Setup(width, height, cellSize);
     }
 
     //these four functions Add/Get/Remove UnitAtGridPosition will help our grid recognize when a tile is empty, occupied, or

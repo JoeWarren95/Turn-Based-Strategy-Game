@@ -16,6 +16,7 @@ public class Pathfinding : MonoBehaviour
     private const int MOVE_DIAGONAL_COST = 14;
 
     [SerializeField] private Transform gridDebugObjectPrefab;
+    [SerializeField] private LayerMask obstaclesLayerMask;
 
     private int width;
     private int height;
@@ -33,12 +34,43 @@ public class Pathfinding : MonoBehaviour
             return;
         }
         Instance = this;
+    }
 
-        gridSystem = new GridSystem<PathNode>(10, 10, 2f, 
+    public void Setup(int width, int height, float cellSize)
+    {
+        this.width = width;
+        this.height = height;
+        this.cellSize = cellSize;
+
+        gridSystem = new GridSystem<PathNode>(width, height, cellSize,
             (GridSystem<PathNode> g, GridPosition gridPosition) => new PathNode(gridPosition));
 
         gridSystem.CreateDebugObjects(gridDebugObjectPrefab);
 
+        for(int x = 0; x < width; x++)
+        {
+            for(int z = 0; z < height; z++)
+            {
+                //here we are offsetting the raycasts to detect if a grid position is walkable or not to be
+                //under the map. We do this bc a raycast that is spawned inside a collider won't detect anything
+                //that is unless we go into our Project Settings --> Physics --> and enable "Queries Hit Backfaces"
+                //by default this setting is unchecked
+                GridPosition gridPosition = new GridPosition(x, z);
+
+                Vector3 worldPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
+
+                float raycastOffsetDistance = 5f;
+
+                if (Physics.Raycast(
+                    worldPosition + Vector3.down * raycastOffsetDistance, 
+                    Vector3.up, 
+                    raycastOffsetDistance * 2,
+                    obstaclesLayerMask))
+                {
+                    GetNode(x, z).SetIsWalkable(false);
+                }
+            }
+        }
     }
 
     public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition)
@@ -46,7 +78,7 @@ public class Pathfinding : MonoBehaviour
         //This function we will calculate the path between the start position and the end postition and return it
         ///with this list we will create the A* algorithm, we do this by following these steps:
 
-        #region #1 Create 2 Lists
+        #region #1 Create 2 Lists, one open and one closed
         //the openList is the Nodes that are queued up for searching
         List<PathNode> openList = new List<PathNode>();
 
@@ -60,12 +92,14 @@ public class Pathfinding : MonoBehaviour
         //set the end node on the final point we want to reach
         PathNode endNode = gridSystem.GetGridObject(endGridPosition);
 
+        #region #2 Put the starting node on the open list
         //- to the open list here
         openList.Add(startNode);
+        #endregion
 
         //cycle through all the nodes and reset their state and then initialize them when
         //a path needs to be found
-        for(int x = 0; x < gridSystem.GetWidth(); x++)
+        for (int x = 0; x < gridSystem.GetWidth(); x++)
         {
             for(int z = 0; z < gridSystem.GetHeight(); z++)
             {
@@ -86,7 +120,7 @@ public class Pathfinding : MonoBehaviour
             }
         }
 
-        //set up start node
+        //set up the gCost of the start node
         startNode.SetGCost(0);
 
         //this is the basic guess how long it'll take to get from point A to point B
@@ -96,6 +130,7 @@ public class Pathfinding : MonoBehaviour
         //we run the algorithm only while there are still elements in the open list
         while (openList.Count > 0)
         {
+            #region #3 Search the list and find the node with the lowest F Cost
             //search for the lowest cost path
             PathNode currentNode = GetLowestFCostPathNode(openList);
 
@@ -104,20 +139,32 @@ public class Pathfinding : MonoBehaviour
                 //reached final node
                 return CalculatePath(endNode);
             }
+            #endregion
 
+            #region #4 Remove the current node from the open list and add it to the closed list
             //remove the current node and -
             openList.Remove(currentNode);
 
             //- add it to the closed list indicating we've already searched through it
             closedList.Add(currentNode);
+            #endregion
 
+            #region #5 Find all 8 descendants of the current node and set the current node as their parent
             //this foreach loop gets the list of all of the neighbors to the node we're on
-            foreach(PathNode neighborNode in GetNeighborList(currentNode))
+            //we are looking for a 'successor' here
+            foreach (PathNode neighborNode in GetNeighborList(currentNode))
             {
                 //first we check if we have already gone through a possible node by checking if it's on the
                 //closed list
                 if (closedList.Contains(neighborNode))
                 {
+                    continue;
+                }
+
+                if (!neighborNode.IsWalkable())
+                {
+                    //skip all unwalkable nodes by adding them to the closed list
+                    closedList.Add(neighborNode);
                     continue;
                 }
 
@@ -142,6 +189,7 @@ public class Pathfinding : MonoBehaviour
                     }
                 }
             }
+            #endregion
         }
 
         //No path found

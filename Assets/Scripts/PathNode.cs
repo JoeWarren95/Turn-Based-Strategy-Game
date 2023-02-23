@@ -24,6 +24,8 @@ public class PathNode
     //the reference to the path node we came from to reach the node we are currently on
     private PathNode cameFromPathNode;
 
+    private bool isWalkable = true;
+
     public PathNode(GridPosition gridPosition)
     {
         this.gridPosition = gridPosition;
@@ -85,5 +87,15 @@ public class PathNode
     public GridPosition GetGridPosition()
     {
         return gridPosition;
+    }
+
+    public bool IsWalkable()
+    {
+        return isWalkable;
+    }
+
+    public void SetIsWalkable(bool isWalkable)
+    {
+        this.isWalkable = isWalkable;
     }
 }
