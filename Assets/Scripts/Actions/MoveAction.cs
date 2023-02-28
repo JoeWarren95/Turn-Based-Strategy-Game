@@ -9,7 +9,7 @@ public class MoveAction : BaseAction
     /// with this script, we are establishing one of the moves a player can do on their turn
     /// the move action. We simply took the code from the Unit script, and placed it here
     /// </summary>
-    private Vector3 targetPosition;
+    private List<Vector3> positionList;
 
     public event EventHandler OnStartMoving;
     public event EventHandler OnStopMoving;
@@ -17,14 +17,17 @@ public class MoveAction : BaseAction
 
     [SerializeField] private int maxMoveDistance = 4;
 
+    private int currentPositionIndex;
 
-    protected override void Awake()
+    #region Now that we have the isActive bool, we no longer need to set the pos of our unit
+    /*protected override void Awake()
     {
         base.Awake();
      
         //set an initial position for our unit
-        targetPosition = transform.position;
-    }
+        //targetPosition = transform.position;
+    }*/
+    #endregion
 
     private void Update()
     {
@@ -33,8 +36,16 @@ public class MoveAction : BaseAction
             return;
         }
 
+        Vector3 targetPosition = positionList[currentPositionIndex];
+
         //this line sets the direction we want to go
         Vector3 moveDirection = (targetPosition - transform.position).normalized;
+
+        float rotateSpeed = 10f;
+
+        //this line sets the transforms forward vector to be their move direction
+        //so in this way the unit is "facing" where they are going
+        transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * rotateSpeed);
 
         float stoppingDistance = 0.1f;
         if (Vector3.Distance(transform.position, targetPosition) > stoppingDistance)
@@ -46,29 +57,39 @@ public class MoveAction : BaseAction
         }
         else
         {
-            //stop the move animation
-            OnStopMoving?.Invoke(this, EventArgs.Empty);
-            ActionComplete();
+            currentPositionIndex++;
+
+            if(currentPositionIndex >= positionList.Count)
+            {
+                //stop the move animation
+                OnStopMoving?.Invoke(this, EventArgs.Empty);
+                ActionComplete();
+            }
+            
         }
 
-        float rotateSpeed = 10f;
-
-        //this line sets the transforms forward vector to be their move direction
-        //so in this way the unit is "facing" where they are going
-        transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * rotateSpeed);
     }
 
     //NOTE this function was originally called 'Move()' but it was refactored in "Generic Take Action"
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
+        List<GridPosition> pathGridPositionList = Pathfinding.Instance.FindPath(unit.GetGridPosition(), gridPosition, out int pathLength);
+
+        currentPositionIndex = 0;
+        positionList = new List<Vector3>();
+
+        foreach(GridPosition pathGridPosition in pathGridPositionList)
+        {
+            positionList.Add(LevelGrid.Instance.GetWorldPosition(pathGridPosition));
+        }
+
         //this function is responsible for moving the unit, it is public so that we can access it from
         //other scripts, without exposing the internal code to everyone
-        this.targetPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
+        //this.targetPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
 
         OnStartMoving?.Invoke(this, EventArgs.Empty);
 
         ActionStart(onActionComplete);
-
     }
 
     #region REFACTORED CODE (function added to BaseAction Script)
@@ -113,6 +134,26 @@ public class MoveAction : BaseAction
                 //test if grid position is already occupied with another unit
                 if (LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition))
                 {
+                    continue;
+                }
+
+                if (!Pathfinding.Instance.IsWalkableGridPosition(testGridPosition))
+                {
+                    continue;
+                }
+
+                if (!Pathfinding.Instance.HasPath(unitGridPosition, testGridPosition))
+                {
+                    //this checks makes sure we don't mark grid positions that have no path to 
+                    //them as walkable
+                    continue;
+                }
+
+                int pathfindingDistanceMultiplier = 10;
+
+                if (Pathfinding.Instance.GetPathLength(unitGridPosition, testGridPosition) > maxMoveDistance * pathfindingDistanceMultiplier)
+                {
+                    //path length is too long
                     continue;
                 }
 

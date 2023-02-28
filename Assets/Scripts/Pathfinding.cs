@@ -45,7 +45,7 @@ public class Pathfinding : MonoBehaviour
         gridSystem = new GridSystem<PathNode>(width, height, cellSize,
             (GridSystem<PathNode> g, GridPosition gridPosition) => new PathNode(gridPosition));
 
-        gridSystem.CreateDebugObjects(gridDebugObjectPrefab);
+        //gridSystem.CreateDebugObjects(gridDebugObjectPrefab);
 
         for(int x = 0; x < width; x++)
         {
@@ -73,7 +73,7 @@ public class Pathfinding : MonoBehaviour
         }
     }
 
-    public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition)
+    public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition, out int pathLength)
     {
         //This function we will calculate the path between the start position and the end postition and return it
         ///with this list we will create the A* algorithm, we do this by following these steps:
@@ -137,6 +137,8 @@ public class Pathfinding : MonoBehaviour
             if(currentNode == endNode)
             {
                 //reached final node
+                pathLength = endNode.GetFCost();
+
                 return CalculatePath(endNode);
             }
             #endregion
@@ -193,6 +195,7 @@ public class Pathfinding : MonoBehaviour
         }
 
         //No path found
+        pathLength = 0;
         return null;
     }
 
@@ -339,5 +342,21 @@ public class Pathfinding : MonoBehaviour
         }
 
         return gridPositionList;
+    }
+
+    public bool IsWalkableGridPosition(GridPosition gridPosition)
+    {
+        return gridSystem.GetGridObject(gridPosition).IsWalkable();
+    }
+
+    public bool HasPath(GridPosition startGridPosition, GridPosition endGridPosition)
+    {
+        return FindPath(startGridPosition, endGridPosition, out int pathLength) != null;
+    }
+
+    public int GetPathLength(GridPosition startGridPosition, GridPosition endGridPosition)
+    {
+        FindPath(startGridPosition, endGridPosition, out int pathLength);
+        return pathLength;
     }
 }

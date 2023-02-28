@@ -20,7 +20,8 @@ public class Testing : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.T))
         {
-            GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
+            #region Pathfinding logic visualized, refactored into MoveAction
+            /*GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
             GridPosition startGridPosition = new GridPosition(0, 0);
 
             List<GridPosition> gridPositionList = Pathfinding.Instance.FindPath(startGridPosition, mouseGridPosition);
@@ -34,7 +35,10 @@ public class Testing : MonoBehaviour
                     Color.white,
                     10f
                     );
-            }
+            }*/
+            #endregion 
+
         }
+
     }
 }
